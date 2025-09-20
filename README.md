@@ -81,7 +81,7 @@ This shows all logs as strings, avoiding “Data is missing a string field” is
 
 Grafana Dashboard Demo: 
 
-![Grafana Dashboard](images/grafana1.png)
+![Grafana Dashboard](https://github.com/andreysvirid/monitoring-stack/blob/main/images/grafana1.png?raw=true)
 
 ✅ Notes
 Ensure Promtail is deployed and correctly collecting logs from all Pods and nodes.
