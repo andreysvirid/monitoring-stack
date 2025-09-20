@@ -32,14 +32,11 @@ promtail.yaml
 
 Check that all pods are running:
 
-bash
-Копировать код
 kubectl get pods -n default
+
 ⚙️ Configure Grafana Datasources
 Open Grafana UI:
 
-bash
-Копировать код
 kubectl port-forward svc/grafana 3000:3000 -n default
 Open http://localhost:3000 in your browser.
 
@@ -77,10 +74,11 @@ Create the screenshot in Grafana after importing the dashboard and save as scree
 🔍 Explore Logs
 Open Grafana → Explore → Loki and run a query:
 
-logql
-Копировать код
+
 {job="your-app"} |= ""
 This shows all logs as strings, avoiding “Data is missing a string field” issues.
+
+
 
 ✅ Notes
 Ensure Promtail is deployed and correctly collecting logs from all Pods and nodes.

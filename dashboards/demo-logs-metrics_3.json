@@ -1,0 +1,69 @@
+{
+  "annotations": {"list":[{"builtIn":1,"datasource":{"type":"grafana","uid":"-- Grafana --"},"enable":true,"hide":true,"iconColor":"rgba(0, 211, 255, 1)","name":"Annotations & Alerts","type":"dashboard"}]},
+  "editable": true,
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": ["demo","monitoring","kubernetes"],
+  "timezone": "browser",
+  "title": "Demo Logs & Metrics",
+  "uid": "f799cba6-2828-4c17-be8a-5aaed55e42a9",
+  "version": 5,
+  "refresh": "5s",
+  "time": {"from":"now-6h","to":"now"},
+  "templating": {"list":[]},
+  "panels": [
+    {
+      "gridPos":{"h":8,"w":12,"x":0,"y":0},
+      "id":1,
+      "title":"CPU Usage (cores)",
+      "type":"timeseries",
+      "targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"expr":"sum(rate(container_cpu_usage_seconds_total{container!=\"\"}[2m])) by (pod)","refId":"A"}],
+      "fieldConfig":{"defaults":{"color":{"mode":"palette-classic"},"custom":{"axisCenteredZero":false,"lineInterpolation":"linear","lineWidth":1,"pointSize":5,"showPoints":"auto","spanNulls":false,"stacking":{"group":"A","mode":"none"}},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"red","value":80}]}},"overrides":[]},
+      "options":{"legend":{"calcs":[],"displayMode":"list","placement":"bottom","showLegend":true},"tooltip":{"mode":"single","sort":"none"}}
+    },
+    {
+      "gridPos":{"h":8,"w":12,"x":12,"y":0},
+      "id":2,
+      "title":"Memory Usage (bytes)",
+      "type":"timeseries",
+      "targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"expr":"sum(container_memory_usage_bytes{container!=\"\"}) by (pod)","refId":"B"}],
+      "fieldConfig":{"defaults":{"color":{"mode":"palette-classic"},"custom":{"axisCenteredZero":false,"lineInterpolation":"linear","lineWidth":1,"pointSize":5,"showPoints":"auto","spanNulls":false,"stacking":{"group":"A","mode":"none"}},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"red","value":80}]}},"overrides":[]},
+      "options":{"legend":{"calcs":[],"displayMode":"list","placement":"bottom","showLegend":true},"tooltip":{"mode":"single","sort":"none"}}
+    },
+    {
+      "gridPos":{"h":8,"w":12,"x":0,"y":8},
+      "id":4,
+      "title":"Network Receive (bytes/sec)",
+      "type":"timeseries",
+      "targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"expr":"sum(rate(container_network_receive_bytes_total{container!=\"\"}[1m])) by (pod)","refId":"C"}],
+      "fieldConfig":{"defaults":{"color":{"mode":"palette-classic"}},"overrides":[]},
+      "options":{"legend":{"showLegend":true},"tooltip":{"mode":"single"}}
+    },
+    {
+      "gridPos":{"h":8,"w":12,"x":12,"y":8},
+      "id":5,
+      "title":"Network Transmit (bytes/sec)",
+      "type":"timeseries",
+      "targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"expr":"sum(rate(container_network_transmit_bytes_total{container!=\"\"}[1m])) by (pod)","refId":"D"}],
+      "fieldConfig":{"defaults":{"color":{"mode":"palette-classic"}},"overrides":[]},
+      "options":{"legend":{"showLegend":true},"tooltip":{"mode":"single"}}
+    },
+    {
+      "gridPos":{"h":8,"w":12,"x":0,"y":16},
+      "id":6,
+      "title":"Pod Restarts",
+      "type":"timeseries",
+      "targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"expr":"kube_pod_container_status_restarts_total","refId":"E"}],
+      "fieldConfig":{"defaults":{"color":{"mode":"palette-classic"}},"overrides":[]},
+      "options":{"legend":{"showLegend":true},"tooltip":{"mode":"single"}}
+    },
+    {
+      "gridPos":{"h":10,"w":24,"x":0,"y":24},
+      "id":7,
+      "title":"Pod Logs",
+      "type":"logs",
+      "targets":[{"datasource":{"type":"loki","uid":"loki-4"},"expr":"{job=\"varlogs\"}","refId":"F"}],
+      "options":{"dedupStrategy":"none","enableLogDetails":true,"sortOrder":"Descending"}
+    }
+  ]
+}
