@@ -1,29 +1,24 @@
-Monitoring Stack for Project
+# Monitoring Stack for Project
 
-This repository contains manifests to deploy a full monitoring stack in Kubernetes:
+This repository contains Kubernetes manifests to deploy a full monitoring stack:
 
-OpenTelemetry Collector
-
-Prometheus
-
-Grafana Loki
-
-Prometheus
-
-Promtail
-
-Grafana
+- **OpenTelemetry Collector**
+- **Prometheus**
+- **Grafana Loki**
+- **Promtail**
+- **Grafana**
 
 The stack collects metrics and logs from your project and cluster nodes.
 
-🚀 Deployment
+---
 
-Apply all manifests:
+## 🚀 Deployment
 
+Apply all manifests at once:
+
+```bash
 kubectl apply -f manifests/ -R
-
-
-Structure of manifests/:
+The manifests/ folder contains:
 
 otel-collector.yaml
 
@@ -37,17 +32,16 @@ promtail.yaml
 
 Check that all pods are running:
 
+bash
+Копировать код
 kubectl get pods -n default
-
 ⚙️ Configure Grafana Datasources
-
 Open Grafana UI:
 
+bash
+Копировать код
 kubectl port-forward svc/grafana 3000:3000 -n default
-
-
-Open http://localhost:3000
- in your browser.
+Open http://localhost:3000 in your browser.
 
 Add Data Sources:
 
@@ -58,8 +52,7 @@ Loki → http://loki:3100
 In Grafana: Configuration → Data Sources → Add data source
 
 📊 Import Demo Dashboard
-
-Go to Grafana → Dashboards → Manage → Import
+Go to Dashboards → Manage → Import
 
 Choose the file: dashboards/demo-logs-metrics.json
 
@@ -79,21 +72,17 @@ Logs from your project and cluster nodes
 
 🖼️ Demo Dashboard Screenshot
 
-Create the screenshot in Grafana after importing the Dashboard and save as screenshots/demo-dashboard.png.
+Create the screenshot in Grafana after importing the dashboard and save as screenshots/demo-dashboard.png.
 
 🔍 Explore Logs
+Open Grafana → Explore → Loki and run a query:
 
-Open Grafana → Explore → Loki
-
-Query example:
-
+logql
+Копировать код
 {job="your-app"} |= ""
-
-
-This shows all logs as strings to prevent missing field issues.
+This shows all logs as strings, avoiding “Data is missing a string field” issues.
 
 ✅ Notes
-
 Ensure Promtail is deployed and correctly collecting logs from all Pods and nodes.
 
 Make sure the correct Data Sources are selected in Dashboard panels.
