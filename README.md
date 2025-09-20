@@ -79,6 +79,9 @@ Open Grafana → Explore → Loki and run a query:
 This shows all logs as strings, avoiding “Data is missing a string field” issues.
 
 
+Grafana Dashboard Demo: 
+
+![Grafana Dashboard](images/grafana1.png)
 
 ✅ Notes
 Ensure Promtail is deployed and correctly collecting logs from all Pods and nodes.
