@@ -1,0 +1,55 @@
+{
+  "id": null,
+  "title": "Demo Logs & Metrics",
+  "tags": ["demo", "monitoring", "kubernetes"],
+  "timezone": "browser",
+  "schemaVersion": 36,
+  "version": 1,
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "CPU Usage (cores)",
+      "targets": [
+        {
+          "expr": "sum(rate(container_cpu_usage_seconds_total{container!=\"\"}[2m])) by (pod)",
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PROMETHEUS_DS"
+          }
+        }
+      ],
+      "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 }
+    },
+    {
+      "type": "timeseries",
+      "title": "Memory Usage (bytes)",
+      "targets": [
+        {
+          "expr": "sum(container_memory_usage_bytes{container!=\"\"}) by (pod)",
+          "refId": "B",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PROMETHEUS_DS"
+          }
+        }
+      ],
+      "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 }
+    },
+    {
+      "type": "logs",
+      "title": "Pod Logs",
+      "targets": [
+        {
+          "expr": "{job=\"varlogs\"}",
+          "refId": "C",
+          "datasource": {
+            "type": "loki",
+            "uid": "LOKI_DS"
+          }
+        }
+      ],
+      "gridPos": { "x": 0, "y": 8, "w": 24, "h": 10 }
+    }
+  ]
+}
