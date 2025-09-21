@@ -1,0 +1,32 @@
+apiVersion: opentelemetry.io/v1beta1
+kind: OpenTelemetryCollector
+metadata:
+  name: otel-collector
+  namespace: tempo
+spec:
+  mode: deployment
+  image: otel/opentelemetry-collector-contrib:0.91.0
+  serviceAccount: default
+  config:
+    receivers:
+      otlp:
+        protocols:
+          grpc: {}
+          http: {}
+    processors:
+      batch: {}
+    exporters:
+      otlphttp/tempo:
+        endpoint: "http://tempo-distributor.tempo.svc.cluster.local:3200/v1/traces"
+    service:
+      pipelines:
+        traces:
+          receivers:
+            - otlp
+          processors:
+            - batch
+          exporters:
+            - otlphttp/tempo
+      telemetry:
+        logs:
+          level: "debug"

@@ -2,142 +2,124 @@
 
 This repository contains Kubernetes manifests to deploy a full monitoring stack:
 
-- **OpenTelemetry Collector**
-- **Prometheus**
-- **Grafana Loki**
-- **Promtail**
-- **Grafana**
-- **Tempo** (for distributed traces)
+- OpenTelemetry Collector
+- Prometheus
+- Grafana Loki
+- Promtail
+- Grafana
 
-The stack collects metrics, logs, and traces from your project and cluster nodes.
+The stack collects metrics and logs from your project and cluster nodes.
 
 ---
 
 ## 🚀 Deployment
 
-### Apply manifests in Kubernetes
-
 Apply all manifests at once:
 
 ```bash
 kubectl apply -f manifests/ -R
-The manifests/ folder contains:
+```
 
-otel-collector.yaml
+The `manifests/` folder contains:
 
-prometheus.yaml
-
-grafana.yaml
-
-loki.yaml
-
-promtail.yaml
-
-tempo.yaml
+- `otel-collector.yaml`
+- `prometheus.yaml`
+- `grafana.yaml`
+- `loki.yaml`
+- `promtail.yaml`
 
 Check that all pods are running:
 
+```bash
+kubectl get pods -n default
+```
 
-kubectl get pods -n monitoring
-Note: All resources are deployed in the monitoring namespace to avoid conflicts.
+---
 
-⚙️ Flux / GitOps Deployment
-If using Flux, ensure the Git repository and branch are configured:
+## ⚙️ Configure Grafana Datasources
 
-
-flux create source git monitoring-stack \
-  --url=https://github.com/andreysvirid/monitoring-stack.git \
-  --branch=main \
-  --interval=1m
-Deploy Helm charts via Flux:
-
-
-flux create helmrelease monitoring-stack \
-  --source=GitRepository/monitoring-stack \
-  --chart=prometheus \
-  --interval=5m
-Check HelmReleases status:
-
-
-flux get helmrelease -A
-⚙️ Configure Grafana Datasources
 Open Grafana UI:
 
+```bash
+kubectl port-forward svc/grafana 3000:3000 -n default
+```
 
-kubectl port-forward svc/grafana 3000:3000 -n monitoring
-Open http://localhost:3000 in your browser.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 Add Data Sources:
 
-Prometheus → http://prometheus:9090
+- **Prometheus** → `http://prometheus:9090`
+- **Loki** → `http://loki:3100`
 
-Loki → http://loki:3100
+In Grafana: *Configuration → Data Sources → Add data source*
 
-Tempo → http://tempo-query-frontend:3200
+---
 
-In Grafana: Configuration → Data Sources → Add data source
+## 📊 Import Demo Dashboard
 
-📊 Import Demo Dashboard
-Go to Dashboards → Manage → Import
-
-Choose the file: dashboards/demo-logs-metrics.json
-
-Set Datasource mapping:
-
-PROMETHEUS_DS → Prometheus
-
-LOKI_DS → Loki
-
-TEMPO_DS → Tempo
-
-Click Import
+1. Go to *Dashboards → Manage → Import*  
+2. Choose the file: `dashboards/demo-logs-metrics.json`  
+3. Set Datasource mapping:  
+   - `PROMETHEUS_DS` → Prometheus  
+   - `LOKI_DS` → Loki  
+4. Click **Import**
 
 You will see a dashboard with:
 
-CPU and Memory metrics of your Pods
+- CPU and Memory metrics of your Pods  
+- Logs from your project and cluster nodes  
 
-Logs from your project and cluster nodes
+---
 
-Distributed traces from Otel-instrumented applications
+## 🖼️ Demo Dashboard Screenshot
 
-🔍 Explore Logs and Traces
-Logs:
-Open Grafana → Explore → Loki and run:
+After importing the dashboard, you should see something like this:
 
+![Grafana Dashboard](https://github.com/andreysvirid/monitoring-stack/blob/main/images/grafana1.png?raw=true)
 
+---
+
+## 🔍 Explore Logs
+
+Open Grafana → **Explore → Loki** and run a query:
+
+```logql
 {job="your-app"} |= ""
-Traces:
-Open Grafana → Explore → Tempo and run a TraceQL query:
+```
+
+This shows all logs as strings, avoiding “Data is missing a string field” issues.
+
+---
 
 
-service.name = "current-version-api" | limit 20
-Ensure the OpenTelemetry Collector is configured to export traces to Tempo:
+## Flux Deployment 
 
+Flux is connected to the Git repository containing the monitoring stack manifests.
 
-exporters:
-  tempo:
-    endpoint: "tempo:4317"
-service:
-  pipelines:
-    traces:
-      receivers: [otlp]
-      processors: [batch]
-      exporters: [tempo]
-Check Collector logs for traces:
+Deployment uses Kustomize overlays located in the flux/ folder:
 
+flux/base/ – base manifests for all components
 
-kubectl logs -n monitoring deploy/otel-collector
-You should see trace/log events from your demo application.
+flux/overlays/dev/ – environment-specific configuration for dev
 
-✅ Notes
-Deploy all components in the monitoring namespace to avoid conflicts.
+Flux continuously syncs the cluster with the repository: any changes in Git are automatically applied.
 
-Ensure Promtail collects logs from all Pods and cluster nodes.
+Commands
+# Install Flux in the cluster (if not installed)
+flux install
 
-Make sure the correct Data Sources are selected in Dashboard panels.
+# Apply Flux GitRepository and Kustomization
+kubectl apply -f flux/gitrepository.yaml
+kubectl apply -f flux/kustomization.yaml
 
-You can customize dashboards to add additional metrics, log queries, and trace visualizations.
+# Check Flux sync status
+flux get kustomizations
+flux get sources git
 
-Use Flux for GitOps-based continuous deployment if required.
+---
 
-Verify traces are exported to Tempo and visible in Grafana.
+## ✅ Notes
+
+- Ensure Promtail is deployed and correctly collecting logs from all Pods and nodes.  
+- Make sure the correct Data Sources are selected in Dashboard panels.  
+- You can customize the dashboard to add additional metrics or log queries.
