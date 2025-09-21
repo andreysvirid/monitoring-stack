@@ -92,13 +92,13 @@ This shows all logs as strings, avoiding “Data is missing a string field” is
 ---
 
 
-## Flux Deployment 
+## 🌊 Flux Deployment 
 
 Flux is connected to the Git repository containing the monitoring stack manifests.
 Deployment uses Kustomize overlays located in the flux/ folder:
 Flux continuously syncs the cluster with the repository: any changes in Git are automatically applied.
 
-### Commands
+#### 🔄 Commands 🔁
 
 Install Flux in the cluster (if not installed)
 ```bash
