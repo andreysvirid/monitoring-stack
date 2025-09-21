@@ -95,26 +95,27 @@ This shows all logs as strings, avoiding “Data is missing a string field” is
 ## Flux Deployment 
 
 Flux is connected to the Git repository containing the monitoring stack manifests.
-
 Deployment uses Kustomize overlays located in the flux/ folder:
-
-flux/base/ – base manifests for all components
-
-flux/overlays/dev/ – environment-specific configuration for dev
-
 Flux continuously syncs the cluster with the repository: any changes in Git are automatically applied.
 
-Commands
-### Install Flux in the cluster (if not installed)
-flux install
+### Commands
 
-### Apply Flux GitRepository and Kustomization
+Install Flux in the cluster (if not installed)
+```bash
+flux install
+```
+
+Apply Flux GitRepository and Kustomization
+```bash
 kubectl apply -f flux/gitrepository.yaml
 kubectl apply -f flux/kustomization.yaml
+```
 
-### Check Flux sync status
+Check Flux sync status
+```bash
 flux get kustomizations
 flux get sources git
+```
 
 ---
 
