@@ -105,14 +105,14 @@ flux/overlays/dev/ – environment-specific configuration for dev
 Flux continuously syncs the cluster with the repository: any changes in Git are automatically applied.
 
 Commands
-# Install Flux in the cluster (if not installed)
+### Install Flux in the cluster (if not installed)
 flux install
 
-# Apply Flux GitRepository and Kustomization
+### Apply Flux GitRepository and Kustomization
 kubectl apply -f flux/gitrepository.yaml
 kubectl apply -f flux/kustomization.yaml
 
-# Check Flux sync status
+### Check Flux sync status
 flux get kustomizations
 flux get sources git
 
